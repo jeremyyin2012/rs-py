@@ -3,7 +3,8 @@
 When you're ready, start your application by running:
 `docker compose up --build`.
 
-Your application will be available at http://localhost:3000.
+Your Rust application will be available at http://localhost:3000.
+Your Python application will be available at http://localhost:8000.
 
 ### Deploying your application to the cloud
 
@@ -20,3 +21,4 @@ docs for more detail on building and pushing.
 
 ### References
 * [Docker's Rust guide](https://docs.docker.com/language/rust/)
+* [Docker's Python guide](https://docs.docker.com/language/python/)
