@@ -10,12 +10,21 @@
 services:
   server:
     build:
+      dockerfile: Dockerfile
       context: .
       target: final
+    restart: always
     env_file:
       - .env
+    environment:
+      TZ: "Asia/Shanghai"
     ports:
       - 3080:3080
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2m"
+        max-file: "10"
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
