@@ -75,6 +75,9 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+# Install Nginx
+RUN apt-get update && apt-get install -y nginx
+
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -U supervisor
 
@@ -110,5 +113,12 @@ EXPOSE 3000
 
 # What the container should run when it is started.
 # CMD ["/bin/server"]
+
+
+# Nginx
+# RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 3080
+
 COPY supervisor.conf /app/supervisor.conf
 CMD ["supervisord","-c","/app/supervisor.conf"]
