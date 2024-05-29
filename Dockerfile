@@ -75,18 +75,21 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Create a non-privileged user that the app will run under.
-# See https://docs.docker.com/go/dockerfile-user-best-practices/
-ARG UID=10001
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    appuser
-USER appuser
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -U supervisor
+
+# # Create a non-privileged user that the app will run under.
+# # See https://docs.docker.com/go/dockerfile-user-best-practices/
+# ARG UID=10001
+# RUN adduser \
+#     --disabled-password \
+#     --gecos "" \
+#     --home "/nonexistent" \
+#     --shell "/sbin/nologin" \
+#     --no-create-home \
+#     --uid "${UID}" \
+#     appuser
+# USER appuser
 
 # retrieve packages from build stage
 COPY --from=pybuild /app/.venv/ /app/.venv
@@ -96,14 +99,16 @@ COPY . .
 # Expose the port that the application listens on.
 EXPOSE 8000
 # Run the application.
-CMD ["fastapi", "run"]
+# CMD ["fastapi", "run"]
 
 
-# # Copy the executable from the "build" stage.
-# COPY --from=rsbuild /bin/server /bin/
+# Copy the executable from the "build" stage.
+COPY --from=rsbuild /bin/server /bin/
 
-# # Expose the port that the application listens on.
-# EXPOSE 3000
+# Expose the port that the application listens on.
+EXPOSE 3000
 
-# # What the container should run when it is started.
+# What the container should run when it is started.
 # CMD ["/bin/server"]
+COPY supervisor.conf /app/supervisor.conf
+CMD ["supervisord","-c","/app/supervisor.conf"]
